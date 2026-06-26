@@ -1,0 +1,21 @@
+---
+- name: Start a long running task
+  hosts: all
+  gather_facts: false
+  vars:
+    autogenie_webhook: "http://192.168.0.6:8000/webhooks/awx_callback"
+  tasks:
+    - name: Delay
+      ansible.builtin.pause:
+        seconds: 60
+
+    - name: Send response to Autogenie
+      ansible.builtin.uri:
+        url: "{{ autogenie_webhook }}"
+        method: POST
+        body_format: json
+        body:
+          "job_id": "{{ awx_job_id }}"
+          "status": "success"
+          "detail": "This is a test launched by: {{ awx_job_template_name }}"
+      run_once: yes
