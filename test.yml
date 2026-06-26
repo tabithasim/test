@@ -7,7 +7,20 @@
   tasks:
     - name: Delay
       ansible.builtin.pause:
-        seconds: 60
+        seconds: 1
+
+    - name: Curl test
+      ansible.builtin.command: curl -v --max-time 5 http://192.168.0.6:8000/
+      ignore_errors: yes
+      register: curl_result
+
+    - name: Show curl test result
+      ansible.builtin.debug:
+        var: curl_result.stdout_lines
+
+    - name: Show curl test stderr (verbose connection info)
+      ansible.builtin.debug:
+        var: curl_result.stderr_lines
 
     - name: Send response to Autogenie
       ansible.builtin.uri:
